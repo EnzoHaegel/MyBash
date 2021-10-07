@@ -179,32 +179,14 @@ alias ...="cd ../../"
 alias ....="cd ../../../"
 alias .....="cd ../../../../"
 
-alias pop="cd C:/Sites/Lucca/static/poplee"
-alias cpop="code C:/Sites/Lucca/static/poplee"
-
-alias back="cd C:/Sites/Poplee.Talent/back"
-alias cback="code C:/Sites/Poplee.Talent/back"
-
-alias front="cd C:/Sites/Poplee.Talent/front"
-alias cfront="code C:/Sites/Poplee.Talent/front"
-
-alias qa="cd C:/Sites/DevOps/QA/netcore/PopleeTalent"
-alias cqa="code C:/Sites/DevOps/QA/netcore/PopleeTalent"
-
-alias lu="cd C:/Sites/Lucca"
-alias clu="code C:/Sites/Lucca"
-
-alias pp="cd C:/Sites/Lucca/static/paymonitor"
-
 alias txt="code \"C:\Users\ehaegel\Desktop\save au cas ou.txt\""
 
 ## COMMANDES UTILES ##
 
 alias list="find . -print | grep -i"
 alias ns="front && ng serve"
-alias ba="front && npm run build && back && dotnet build"
-alias ra="back && rc && dotnet restore && ba"
-alias ltl="lucca translate lokalise"
+alias ba="npm run build && dotnet build"
+alias ra="dotnet restore && ba"
 alias npmperdu="npm install && npm start"
 
 ## GIT ##
