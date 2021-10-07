@@ -50,13 +50,13 @@ A custom bash with some func and alias
 
 ## :sparkles: Features ##
 
-:heavy_check_mark: Feature 1;\
-:heavy_check_mark: Feature 2;\
-:heavy_check_mark: Feature 3;
+:heavy_check_mark: Custom PS1 that can be edited with branch, time, path, return value;\
+:heavy_check_mark: A lot of bash script with a custom man;\
+:heavy_check_mark: A lot of alias that help to use Git and other;
 
 ## :white_check_mark: Requirements ##
 
-Before starting :checkered_flag:, you need to have [Git](https://git-scm.com) and [Node](https://nodejs.org/en/) installed.
+Before starting :checkered_flag:, you need to have [GitBash](https://gitforwindows.org/) installed.
 
 ## :checkered_flag: Starting ##
 
@@ -67,13 +67,8 @@ $ git clone https://github.com/EnzoHaegel/mybash
 # Access
 $ cd mybash
 
-# Install dependencies
-$ yarn
-
-# Run the project
-$ yarn start
-
-# The server will initialize in the <http://localhost:3000>
+# Setup custom Bash
+$ ./install [name of user on PC]
 ```
 
 ## :memo: License ##
@@ -81,7 +76,7 @@ $ yarn start
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
 
 
-Made with :heart: by <a href="https://github.com/EnzoHaegel" target="_blank">{{YOUR_NAME}}</a>
+Made with :heart: by <a href="https://github.com/EnzoHaegel" target="_blank">Enzo</a>
 
 &#xa0;
 
