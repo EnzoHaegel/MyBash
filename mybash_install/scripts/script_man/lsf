@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    lsf()
+
+UTILISATION :
+    lsf
+
+DESCRIPTION :
+    lsf fait un ls avec seulement les fichiers et avec certains type en couleur :
+    .cs   - vert
+    .html - touge
+    .json - jaune
+    .ts   - bleu
+
+VALEUR DE RETOUR :
+    0
+
+    [1/1]
+"
+fi

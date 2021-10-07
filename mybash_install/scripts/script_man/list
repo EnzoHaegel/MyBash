@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$1" == "-a" ] || [ "$1" == "-alias" ]; then
+    echo "List des alias disponible pour le man"
+    for entry in `ls C:/Users/ehaegel/scripts/script_man/alias`; do
+        if [ ! -d "C:/Users/ehaegel/scripts/script_man/alias/$entry" ]; then
+            echo " - $entry"
+        fi
+    done
+else
+    echo "List des mans disponible, rajoutez le paramètre 'a' pour les alias (man list -a)"
+    for entry in `ls C:/Users/ehaegel/scripts/script_man`; do
+        if [ ! -d "C:/Users/ehaegel/scripts/script_man/$entry" ]; then
+            echo " - $entry"
+        fi
+    done
+fi

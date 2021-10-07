@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    gdl()
+
+UTILISATION :
+    gdl
+    
+DESCRIPTION :
+    gdl affiche les fichiers modifiés du dernier commit
+
+VALEUR DE RETOUR :
+    1   Si vous n'etes pas dans un dossier git
+    0   Si tout marche
+
+    [1/1]
+"
+fi

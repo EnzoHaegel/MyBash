@@ -1,0 +1,78 @@
+#!/bin/bash
+
+arg="$1"
+maxnb="0"
+nb=""
+save=""
+limit="2"
+number="0"
+NumberMax="0"
+HNum="0"
+BarSize="50"
+BarDiv=$((100 / $BarSize))
+actual="0"
+
+for ARG in "${@:2}"; do
+    number=`ls -l $ARG | grep -v ^l | wc -l`
+    NumberMax="$(($number - 1 + $NumberMax))"
+done
+
+progress() {
+    HNum=$(($1 * 100 / $NumberMax / $BarDiv))
+    HVar=""
+    for (( x=0; x<"$HNum"; x++)); do
+        HVar+="#"
+    done
+    ENum="$(($BarSize - HNum))"
+    for (( x=0; x<"$ENum"; x++)); do
+        HVar+=" "
+    done
+    echo -ne "[$HVar] ($(($1 * 100 / $NumberMax))%)  $1/$NumberMax\r"
+}
+
+progress 0
+
+for ARG in "${@:2}"; do
+    for entry in `ls $ARG`; do
+        if [ ! -d "$ARG/$entry" ]; then
+            nb="0"
+            len="0"
+            if (( ${#entry}<=${#arg} )); then
+                if (( ${#arg}-${#entry}<=$limit )); then
+                    len=$((${#arg}-${#entry}))
+                    nb=$((5 - $len * 5 / $limit + $nb))
+                fi
+                res=`compare $arg $entry`
+                nb=$(( $nb + $res ))
+            elif (( ${#entry}>=${#arg} )); then
+                if (( ${#entry}-${#arg}<=$limit )); then
+                    len=$((${#entry}-${#arg}))
+                    nb=$((5 - $len * 5 / $limit + $nb))
+                fi
+                res=`compare $arg $entry`
+                nb=$(( $nb + $res ))
+            fi
+            if (( $maxnb<$nb )); then
+                maxnb="$nb"
+                save="$entry"
+            fi
+        fi
+        if (( $maxnb>=19 )); then
+            actual=$(( $NumberMax ))
+            progress $actual
+            break
+        fi
+        actual=$(( $actual + 1 ))
+        progress $actual
+    done
+done
+echo -ne '\n'
+echo ""
+if [ "$2" == "-d" ]; then
+    echo "$maxnb"
+fi
+if [ -z "$save" ]; then
+    echo "Aucun nom de man n'est similaire à ce que vous cherchez :/"
+else
+    echo -e "Voulez-vous plutot écrire : \e[1;31m$save\e[1;39m ?"
+fi

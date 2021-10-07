@@ -1,0 +1,37 @@
+#!/bin/bash
+
+word="$1"
+word2="$2"
+nb="0"
+letter="0"
+
+for (( z=1; z<=${#word}; z++ )); do
+  var1=`echo "${word}" | cut -c $z`
+  for (( y=1; y<=${#word2}; y++ )); do
+    var2=`echo "${word2}" | cut -c $y`
+    if [ "$var1" == "$var2" ]; then
+      letter=$(( $letter + 1 ))
+      break
+    fi
+  done
+done
+
+if [ "$letter" != "0" ]; then
+  letter=$(( 10 * $letter / ${#word} ))
+
+  for (( x=1; x<=${#word}; x++ )); do
+    var1=`echo "${word}" | cut -c $x`
+    var2=`echo "${word2}" | cut -c $x`
+    if [ "$var1" == "$var2" ]; then
+      nb=$(( $nb + 1 ))
+    fi
+  done
+
+  if [ "$nb" != "0" ]; then
+    nb=$(( 8 * $nb / ${#word} ))
+  fi
+  
+  echo $(($nb + $letter))
+else
+  echo 0
+fi

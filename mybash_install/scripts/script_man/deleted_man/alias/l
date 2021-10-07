@@ -1,0 +1,2 @@
+# lien vers le fichier correspondant : C:/Users/ehaegel/scripts/script_man/list
+man list "$1"

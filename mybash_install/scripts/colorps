@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ "$2" == "Default" ] || [ "$2" == "default" ]; then
+    echo "\e[39m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Black" ] || [ "$2" == "black" ]; then
+    echo "\e[30m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Red" ] || [ "$2" == "red" ]; then
+    echo "\e[31m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Green" ] || [ "$2" == "green" ]; then
+    echo "\e[32m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Yellow" ] || [ "$2" == "yellow" ]; then
+    echo "\e[33m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Blue" ] || [ "$2" == "blue" ]; then
+    echo "\e[34m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Magenta" ] || [ "$2" == "magenta" ]; then
+    echo "\e[35m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Cyan" ] || [ "$2" == "cyan" ]; then
+    echo "\e[36m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi
+if [ "$2" == "Gray" ] || [ "$2" == "gray" ]; then
+    echo "\e[37m" > C:/Users/ehaegel/scripts/data/c"$1"
+fi

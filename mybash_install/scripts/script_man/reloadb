@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+    echo "\
+UTILISATION :
+    reloadb
+    rb
+    cb (permet d'ouvrir le .bashrc de n'importe ou et de lancer le reload auto)
+    
+DESCRIPTION :
+    Reloadb fait un source du .bashrc dès que votre .bashrc est sauvegardé avec des modifications
+    
+    [1/1]
+"
+fi

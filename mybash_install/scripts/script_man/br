@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    br()
+
+UTILISATION :
+    br
+
+DESCRIPTION :
+    br va afficher dans le terminal le nom de la branche git sur laquelle vous
+    êtes actuellement.
+
+VALEUR DE RETOUR :
+    toujours 0
+
+    [1/1]
+"
+fi

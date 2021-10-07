@@ -1,0 +1,62 @@
+#!/bin/bash
+
+if [ "$1" == "-h" ]; then
+    echo "\
+UTILISATION :
+    script [n° page]
+
+ALIAS :
+    scripts
+    sc
+    sl
+    scriptlist
+    man
+    
+DESCRIPTION :
+    Affiche la liste des scripts perso"
+    return 0
+fi
+if [ "$1" != "2" ]; then
+    echo "\
+SCRIPTS:
+
+    Si vous avez besoins de plus d'infos faites man [le nom du script]
+    ou [le nom du script] suivis de \"-h\"
+    exemple : gdl -h
+
+    script      : Donne la liste de tous mes scripts
+    gdl         : Affiche les fichiers modifs du dernier commit
+    reloadb     : Source auto du bashrc pour appliquer les changements dès la sauvegarde du fichier
+    findarg     : On donne le nom d'un fichier, la fonction va chercher ce fichier,
+                  et faire un cd dans le directory du cd si il n'y en a qu'un, 
+                  sinon ça liste les possibilités
+    addcompush  : Add / commit et push tous les fichiers modifiés
+    d           : donne l'heure et s'actualise, press q to quit
+    rl          : git pull de rc et master puis reviens sur la branche active
+    fm          : Affiche les fichiers modifié sur la branche active
+    br          : Donne le nom de la branche actuel
+
+[1/2] Tapez \"script 2\", pour voir les alias -->
+"
+fi
+if [ "$1" == "2" ]; then
+    echo "\
+ALIAS :
+    gc [nom branche]    : va sur rc / pull / créer une branche avec le nom donné
+    gs          : git status
+    gp          : git pull
+    rc          : va sur rc et pull
+    master      : va sur master et pull
+    gd [commit sha]     : montre les fichiers modifiés du commit choisit
+    ra          : rebuild popleetalent sur le dernier rc
+    ba          : build popleetalent sur la branche actuelle
+    ns          : lance un ng serve depuis n'importe ou
+    cb          : lance un reloadb avec l'ouverture du bashrc
+    c           : clear
+    back        : ouvre le back, possibilité d'écrire \"cback\" pour ouvrir le back sur vsc
+    front       : ouvre le front, possibilité d'écrire \"cfront\" pour ouvrir le front sur vsc
+    lu          : ouvre Lucca, possibilité d'écrire \"clu\" pour ouvrir Lucca sur vsc
+
+[2/2] Tapez \"script\", pour voir les scripts <--
+"
+fi

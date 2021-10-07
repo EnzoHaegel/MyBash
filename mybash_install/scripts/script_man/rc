@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    rc()
+
+UTILISATION :
+    rc
+
+DESCRIPTION :
+    La commande rc va aller sur la branch git rc et faire un git pull
+
+VALEUR DE RETOUR :
+    Valeur de retour de git
+
+    [1/1]
+"
+fi

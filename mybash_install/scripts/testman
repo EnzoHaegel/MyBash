@@ -1,0 +1,189 @@
+#!/bin/bash
+
+Red='\e[1;31m'
+Gre='\e[1;32m'
+Nor='\e[1;39m'
+Result=""
+NumberMax="7"
+HNum="0"
+BarSize="50"
+BarDiv=$((100 / $BarSize))
+
+progress() {
+    HNum=$(($1 * 100 / $NumberMax / $BarDiv))
+    HVar=""
+    for (( x=0; x<"$HNum"; x++)); do
+        HVar+="#"
+    done
+    ENum="$(($BarSize - HNum))"
+    for (( x=0; x<"$ENum"; x++)); do
+        HVar+=" "
+    done
+    echo -ne "[$HVar] ($(($1 * 100 / $NumberMax))%)  $1/$NumberMax\r"
+}
+
+progress 0
+
+# test man simple
+
+test_a() {
+    local man_return=""
+    local expected=$(echo $(C:/Users/ehaegel/scripts/script_man/script))
+
+    man_return=$(echo $(man))
+    if [ "$expected" == "$man_return" ]; then
+        echo -e "Test man simple                                        ${Gre}PASSED${Nor}                                                  "
+        return 1
+    else
+        echo -e "Test man simple                                        ${Red}FAILED${Nor}                                                  "
+        return 0
+    fi
+}
+
+test_a
+Result=$(($Result + $?))
+progress 1
+
+# test man page 2
+
+test_b() {
+    local man_return=""
+    local expected="$(echo $(C:/Users/ehaegel/scripts/script_man/script 2))"
+
+    man_return=$(echo $(man 2))
+    if [ "$expected" == "$man_return" ]; then
+        echo -e "Test man page 2                                        ${Gre}PASSED${Nor}                                                  "
+        return 1
+    else
+        echo -e "Test man page 2                                        ${Red}FAILED${Nor}                                                  "
+        return 0
+    fi
+}
+
+test_b
+Result=$(($Result + $?))
+progress 2
+
+# test man template
+
+test_c() {
+    local man_return=""
+    local expected="$(echo $(C:/Users/ehaegel/scripts/script_man/template))"
+
+    man_return=$(echo $(man template))
+    if [ "$expected" == "$man_return" ]; then
+        echo -e "Test man template                                      ${Gre}PASSED${Nor}                                                  "
+        return 1
+    else
+        echo -e "Test man template                                      ${Red}FAILED${Nor}                                                  "
+        return 0
+    fi
+}
+
+test_c
+Result=$(($Result + $?))
+progress 3
+
+# test création de nouveau man
+
+test_d() {
+    local man_return=""
+    local expected="$(cat C:/Users/ehaegel/scripts/script_man/template)"
+
+    man "test_d" "new"
+    if [ ! -f C:/Users/ehaegel/scripts/script_man/test_d ]; then
+        echo -e "Test création de nouveau man                           ${Red}FAILED${Nor}                                                  "
+        return 0
+    fi
+    man_return="$(cat C:/Users/ehaegel/scripts/script_man/test_d)"
+    if [ "$expected" == "$man_return" ]; then
+        echo -e "Test création de nouveau man                           ${Gre}PASSED${Nor}                                                  "
+        return 1
+    else
+        echo -e "Test création de nouveau man                           ${Red}FAILED${Nor}                                                  "
+        return 0
+    fi
+}
+
+test_d
+Result=$(($Result + $?))
+progress 4
+
+# test suppresion de man
+
+test_e() {
+    local man_return=""
+
+    man "test_d" "delete"
+    if [ -f C:/Users/ehaegel/scripts/script_man/test_d ] || [ ! -f C:/Users/ehaegel/scripts/script_man/deleted_man/test_d ]; then
+        echo -e "Test suppresion de man                                 ${Red}FAILED${Nor}                                                  "
+        return 0
+    else
+        echo -e "Test suppresion de man                                 ${Gre}PASSED${Nor}                                                "
+        return 1
+    fi
+}
+
+test_e
+Result=$(($Result + $?))
+progress 5
+
+# test copy de man
+
+test_f() {
+    local man_return=""
+    local expected="$(cat C:/Users/ehaegel/scripts/script_man/template)"
+
+    man "test_f" "copy" "template"
+    if [ ! -f C:/Users/ehaegel/scripts/script_man/test_f ]; then
+        echo -e "Test copy de man                                       ${Red}FAILED${Nor}                                                  "
+        echo -e "   Le man n'est pas créé avec la copie                                                                                    "
+        return 0
+    fi
+    man_return="$(cat C:/Users/ehaegel/scripts/script_man/test_f)"
+    if [ "$expected" == "$man_return" ]; then
+        echo -e "Test copy de man                                       ${Gre}PASSED${Nor}                                                  "
+        rm -f C:/Users/ehaegel/scripts/script_man/test_f
+        return 1
+    else
+        echo -e "Test copy de man                                       ${Red}FAILED${Nor}                                                  "
+        echo -e "   Le man créé n'est pas égale à la copie                                                                                 "
+        rm -f C:/Users/ehaegel/scripts/script_man/test_f
+        return 0
+    fi
+}
+
+test_f
+Result=$(($Result + $?))
+progress 6
+
+# test restore de man
+
+test_g() {
+    local man_return=""
+
+    man "test_d" "restore"
+    if [ ! -f C:/Users/ehaegel/scripts/script_man/test_d ]; then
+        echo -e "Test restore de man                                    ${Red}FAILED${Nor}                                                  "
+        echo -e "   Le man n'est pas restore, fichier introuvable                                                                                    "
+        return 0
+    else
+        echo -e "Test restore de man                                    ${Gre}PASSED${Nor}                                                  "
+        rm -f C:/Users/ehaegel/scripts/script_man/test_d
+        return 1
+    fi
+}
+
+test_g
+Result=$(($Result + $?))
+progress 7
+
+Percent=$(($Result * 100 / $NumberMax))
+
+echo -ne '\n'
+echo ""
+if [ "$Percent" == "100" ]; then
+    echo -e "${Gre}$Result/$NumberMax${Nor} tests PASSED                                       ${Gre}$Percent%${Nor}"
+else
+    echo -e "${Red}$Result/$NumberMax${Nor} tests PASSED                                       ${Red}$Percent%${Nor}"
+fi

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#!/bin/bash
+
+num="1"
+save=""
+max="0"
+path="."
+
+if [ -d "$1" ]; then
+    path="$1"
+fi
+for entry in `ls "$path"`; do
+    if (( ${#entry}>$max )); then
+        max=${#entry}
+    fi
+done
+max=$(($max+3))
+
+for entry in `ls "$path"`; do
+    if [ "$num" == "1" ]; then
+        num="2"
+        if [ -d "$path/$entry" ]; then
+            echo -ne "\e[34m- $entry/\e[0;37;40m"
+            save="$entry/"
+        else
+            echo -n "- $entry"
+            save="$entry"
+        fi
+    elif [ "$num" == "2" ]; then
+        num="3"
+        for (( x=0; x<$max-${#save}; x++)); do
+            echo -n " "
+        done
+        if [ -d "$path/$entry" ]; then
+            echo -ne "\e[34m- $entry/\e[0;37;40m"
+            save="$entry/"
+        else
+            echo -n "- $entry"
+            save="$entry"
+        fi
+    elif [ "$num" == "3" ]; then
+        num="1"
+        for (( x=0; x<$max-${#save}; x++)); do
+            echo -n " "
+        done
+        if [ -d "$path/$entry" ]; then
+            echo -e "\e[34m- $entry/\e[0;37;40m"
+            save="$entry/"
+        else
+            echo "- $entry"
+            save="$entry"
+        fi
+    fi
+done
+if [ "$num" != "1" ]; then
+    echo ""
+fi

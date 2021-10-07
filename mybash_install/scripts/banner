@@ -1,0 +1,735 @@
+#!/bin/bash
+
+### Banner with color ###
+# by rern
+
+width=$( tput cols ) # terminal width
+hr=$( printf "\e[36m%*s\e[0m\n" "${COLUMNS:-$width}" '' | tr ' ' '-' )
+info="\e[38;5;0m\e[48;5;11m i \e[0m"
+
+usage() {
+	example
+	echo "example:  ${0##*/} -c 6 'banner|script'"
+	echo -e "
+$hr
+usage  :  ${0##*/} [OPTIONS...] STRING
+$hr
+OPTIONS:
+-b N      N = background color code ('0' black - default)
+-c N      N = character color code  ('7' white - default)
+-C        display color chart
+-f FILE   save to FILE              (to be used as 'cat file')
+-i        interactive mode          (-c, -m options only)
+-m        used as 'motd'            (in terminal login screen)
+-r        restore original 'motd'
+-t C      C = single character      ('#' default)
+STRING    a-z (lowercase) : will be converted to uppercase
+          ' (single quote): must be escaped and place outside quotes
+          | (pipe)        : manual line break position
+$hr
+	"
+	exit
+}
+
+# functions
+################################################################################
+# 
+banner='' # outside function for appending multiple lines
+array2banner() {
+	local string arrayline0 arrayline1 arrayline2 arrayline3 arrayline4 char line0 line1 line2 line3 line4
+	string="${@^^}" # convert to uppercase
+	arrayline0=(); arrayline1=(); arrayline2=(); arrayline3=(); arrayline4=()
+	for (( i=0; i < ${#string}; i++ )); do
+		# array element to character
+		char=${string:i:1}
+		# character to substitue - numbers and symbols to use as variable names
+		case "$char" in
+			[1-9]) char="n$char";;
+			0) char='O';;
+			' ') char='space';;
+			'.') char='dot';;
+			':') char='colon';;
+			',') char='comma';;
+			';') char='semicolon';;
+			"'") char='quote';;
+			'"') char='doublequote';;
+			'+') char='plus';;
+			'-') char='dash';;
+			'*') char='asterisk';;
+			'/') char='slash';;
+			'^') char='power';;
+			'=') char='equal';;
+			'<') char='less';;
+			'>') char='more';;
+			'%') char='percent';;
+			'!') char='exclaim';;
+			'@') char='at';;
+			'#') char='hash';;
+			'$') char='dollar';;
+			'&') char='ampersand';;
+			'_') char='underscore';;
+			'\') char='backslash';;
+			'{') char='curlL';;
+			'[') char='bracketL';;
+			'(') char='parenthesesL';;
+			')') char='parenthesesR';;
+			']') char='bracketR';;
+			'}') char='curlR';;
+			'?') char='question';;
+			[^A-Z,a-z]) char='space';;
+		esac
+		# character / substitute to array of lines - name of each line of each character
+		# A -> ar0[i]=(A[0]); ar1[i]=(A[1]) ...
+		arrayline0[i]=${char}[0]
+		arrayline1[i]=${char}[1]
+		arrayline2[i]=${char}[2]
+		arrayline3[i]=${char}[3]
+		arrayline4[i]=${char}[4]
+	done
+
+	# array of lines to lines of value sequence - with '!'indirect reference
+	# arrayline0=(A[0] B[0] C[0] ...) -> line0="$A[0] $B[0] $C[0] ... "
+	line0='' line1='' line2='' line3='' line4=''
+	for (( i=0; i < ${#string}; i++ )); do
+		line0+=" ${!arrayline0[i]}"
+		line1+=" ${!arrayline1[i]}"
+		line2+=" ${!arrayline2[i]}"
+		line3+=" ${!arrayline3[i]}"
+		line4+=" ${!arrayline4[i]}"
+	done
+	# banner - append all lines
+	banner=$banner"\n$line0\n$line1\n$line2\n$line3\n$line4\n"
+}
+# break string to array of each banner line
+string2array() {
+	local string bannerwidth arraymanual substring arraystring
+	string="$@"
+	bannerwidth=$(( width / 6 )) # banner characters per line
+
+	if expr index "$string" '|' &> /dev/null; then
+		# manual - split string by '|' line break markers
+		IFS='|' read -ra arraymanual <<< "$string"
+		
+		# convert array back to string with '|' markers
+		string=''
+		for (( j=0; j < ${#arraymanual[*]}; j++ )); do
+			if [[ ${#arraymanual[j]} -le $bannerwidth ]]; then
+				string="$string|${arraymanual[j]}"
+			else
+				# split strings in array if longer than banner line
+				substring=$( echo "${arraymanual[j]}" | sed "s/.\{$bannerwidth\}/&|/g" )
+				string="$string|${substring[@]}"
+			fi
+		done
+		string=${string/|/}       # trim left '|'
+	else
+		# auto - insert '|' line break markers
+		string=$( echo "$string" | sed "s/.\{$bannerwidth\}/&|/g" )
+	fi
+	
+	# split string by '|' markers
+	IFS='|' read -ra arraystring <<< "$string" # split
+	
+	# loop each banner line
+	for (( j=0; j < ${#arraystring[*]}; j++ )); do # 'j' keep separation from 'i' loop
+		substring=$( echo "${arraystring[j]}" | sed -e 's/^ //' -e 's/ $//' ) # remove leading / trailing space
+		array2banner "$substring"
+	done
+	
+	# output
+	bannerout=$( echo "$banner" | sed -e 's/#\+/\\e[38;5;'$color'm\\e[48;5;'$bg'm&/g' -e 's/#\+/&\\e[0m/g' )
+	if [[ $character ]]; then
+		bannerout=$( echo "$bannerout" | sed 's/#/'$character'/g' )
+	fi
+	echo -e "$bannerout"
+}
+
+restore() {
+	if [[ ! -f /etc/motd.banner ]]; then
+		echo -e "\n$info No custom 'motd' banner found.\n"
+		exit
+	fi
+	rm -f /etc/motd.banner
+	rm -f /etc/profile.d/motd.sh
+	sed -i '\|cat /etc/banner|d' /etc/profile
+	[[ -e /etc/motd.original ]] && mv /etc/motd{.original,}
+	cat /etc/motd
+	echo -e "$info Relogin to see this original 'mtod'.\n"
+}
+
+# for usage function
+example() {
+	color=14
+	string2array "${0##*/}|script"
+}
+
+colorchart() {
+	local code
+	echo
+		for i in {0..255}; do
+			code=$( printf %03d $i )
+			printf "\e[48;5;${i}m  \e[0m \e[38;5;${i}m$code\e[0m  "
+			(( i == 7 )) || (( i == 243 )) || (( i == 255 )) && echo
+			( (( i == 15 )) || (( i > 15 )) && (( i < 232 )) && (( (i-15) % 6 == 0 )) ) && echo
+		done
+	echo
+}
+
+interactive() {
+	echo -ne "\n$info Text:  "
+	read text
+	c0='\e[0m'        # reset color
+	c1='\e[38;5;1m' # red
+	c2='\e[38;5;2m'  # green
+	c3='\e[38;5;3m'  # yellow
+	c4='\e[38;5;4m'  # blue
+	c5='\e[38;5;5m'  # magenta
+	c6='\e[38;5;6m'  # cyan
+	c7='\e[38;5;7m'  # white
+	echo -e "
+$c1  # $c2   ### $c3  ### $c4    # $c5 #### $c6  ###  $c7#####
+$c1 ## $c2  #   #$c3 #   #$c4   ## $c5 #    $c6 #     $c7   # 
+$c1  # $c2     # $c3    # $c4  # # $c5 #### $c6 ####  $c7  #  
+$c1  # $c2   #   $c3 #   #$c4 #####$c5     #$c6 #   # $c7 #   
+$c1 ###$c2  #####$c3  ### $c4    # $c5 #### $c6  ###  $c7 #   
+$c0"
+
+	setcolor() {
+		echo -ne "$info Color (1 - 255 or ? for color chart):  "
+		read co
+		if [[ $co -gt 0 && $co -lt 256 ]]; then
+			color=$co
+		else
+			colorchart
+			setcolor
+		fi
+	}
+	setcolor
+	
+	string2array "$text"
+	echo -ne "$info Use as 'motd' in terminal login (${c6}No$c0 / Yes):  "
+	read -n 1 mo
+	echo ' '
+	[[ ${mo,,} == y ]] && motd=1 || exit
+}
+
+# variables - font matrix
+################################################################################
+# ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890.:,;"+-*/^=<>%!@#$&_\{[()]}?'
+
+A=(
+'  #  '
+' # # '
+'#   #'
+'#####'
+'#   #'
+)
+B=(
+'#### '
+'#   #'
+'#### '
+'#   #'
+'#### '
+)
+C=(
+' ### '
+'#   #'
+'#    '
+'#   #'
+' ### '
+)
+D=(
+'#### '
+'#   #'
+'#   #'
+'#   #'
+'#### '
+)
+E=(
+'#####'
+'#    '
+'###  '
+'#    '
+'#####'
+)
+F=(
+'#####'
+'#    '
+'###  '
+'#    '
+'#    '
+)
+G=(
+' ####'
+'#    '
+'#  ##'
+'#   #'
+' ####'
+)
+H=(
+'#   #'
+'#   #'
+'#####'
+'#   #'
+'#   #'
+)
+I=(
+' # '
+' # '
+' # '
+' # '
+' # '
+)
+J=(
+'   #'
+'   #'
+'   #'
+'#  #'
+' ## '
+)
+K=(
+'#   #'
+'#  # '
+'###  '
+'#  # '
+'#   #'
+)
+L=(
+'#    '
+'#    '
+'#    '
+'#    '
+'#####'
+)
+M=(
+'#   #'
+'## ##'
+'# # #'
+'#   #'
+'#   #'
+)
+N=(
+'#   #'
+'##  #'
+'# # #'
+'#  ##'
+'#   #'
+)
+O=(
+' ### '
+'#   #'
+'#   #'
+'#   #'
+' ### '
+)
+P=(
+'#### '
+'#   #'
+'#### '
+'#    '
+'#    '
+)
+Q=(
+' ### '
+'#   #'
+'# # #'
+'#  # '
+' ## #'
+)
+R=(
+'#### '
+'#   #'
+'#### '
+'#  # '
+'#   #'
+)
+S=(
+' ####'
+'#    '
+' ### '
+'    #'
+'#### '
+)
+T=(
+'#####'
+'  #  '
+'  #  '
+'  #  '
+'  #  '
+)
+U=(
+'#   #'
+'#   #'
+'#   #'
+'#   #'
+' ### '
+)
+V=(
+'#   #'
+'#   #'
+'#   #'
+' # # '
+'  #  '
+)
+W=(
+'#   #'
+'#   #'
+'# # #'
+'## ##'
+'#   #'
+)
+X=(
+'#   #'
+' # # '
+'  #  '
+' # # '
+'#   #'
+)
+Y=(
+'#   #'
+' # # '
+'  #  '
+'  #  '
+'  #  '
+)
+Z=(
+'#####'
+'   # '
+'  #  '
+' #   '
+'#####'
+)
+n1=(
+'  #  '
+' ##  '
+'  #  '
+'  #  '
+' ### '
+)
+n2=(
+' ### '
+'#   #'
+'   # '
+' #   '
+'#####'
+)
+n3=(
+' ### '
+'#   #'
+'   # '
+'#   #'
+' ### '
+)
+n4=(
+'   # '
+'  ## '
+' # # '
+'#####'
+'   # '
+)
+n5=(
+'#### '
+'#    '
+'#### '
+'    #'
+'#### '
+)
+n6=(
+' ### '
+'#    '
+'#####'
+'#   #'
+' ### '
+)
+n7=(
+'#####'
+'   # '
+'  #  '
+' #   '
+' #   '
+)
+n8=(
+' ### '
+'#   #'
+' ### '
+'#   #'
+' ### '
+)
+n9=(
+' ### '
+'#   #'
+' ####'
+'    #'
+' ### '
+)
+space=(
+'     '
+'     '
+'     '
+'     '
+'     '
+)
+dot=(
+'     '
+'     '
+'     '
+' ##  '
+' ##  '
+)
+colon=(
+' ##  '
+' ##  '
+'     '
+' ##  '
+' ##  '
+)
+comma=(
+'     '
+'     '
+'     '
+' ##  '
+'  #  '
+)
+semicolon=(
+' ##  '
+' ##  '
+'     '
+' ##  '
+'  #  '
+)
+doublequote=(
+' # # '
+' # # '
+'     '
+'     '
+'     '
+)
+plus=(
+'     '
+'  #  '
+'#####'
+'  #  '
+'     '
+)
+dash=(
+'     '
+'     '
+'#####'
+'     '
+'     '
+)
+asterisk=(
+'     '
+' # # '
+'#####'
+' # # '
+'     '
+)
+slash=(
+'    #'
+'   # '
+'  #  '
+' #   '
+'#    '
+)
+power=(
+'  #  '
+' # # '
+'#   #'
+'     '
+'     '
+)
+equal=(
+'     '
+'#####'
+'     '
+'#####'
+'     '
+)
+less=(
+'    #'
+'  #  '
+'#    '
+'  #  '
+'    #'
+)
+more=(
+'#    '
+'  #  '
+'    #'
+'  #  '
+'#    '
+)
+percent=(
+'##  #'
+'## # '
+'  #  '
+' # ##'
+'#  ##'
+)
+exclaim=(
+'  #  '
+'  #  '
+'  #  '
+'     '
+'  #  '
+)
+at=(
+' ### '
+'#   #'
+'# ###'
+'# # #'
+' ####'
+)
+hash=(
+' # # '
+'#####'
+' # # '
+'#####'
+' # # '
+)
+dollar=(
+' ####'
+'# #  '
+' ### '
+'  # #'
+'#### '
+)
+ampersand=(
+' ##  '
+' ##  '
+'# # #'
+'#  # '
+' ## #'
+)
+underscore=(
+'     '
+'     '
+'     '
+'     '
+'#####'
+)
+backslash=(
+'#    '
+' #   '
+'  #  '
+'   # '
+'    #'
+)
+curlL=(
+'  ## '
+' #   '
+'##   '
+' #   '
+'  ## '
+)
+bracketL=(
+' ### '
+' #   '
+' #   '
+' #   '
+' ### '
+)
+parenthesesL=(
+'  #  '
+' #   '
+' #   '
+' #   '
+'  #  '
+)
+parenthesesR=(
+'  #  '
+'   # '
+'   # '
+'   # '
+'  #  '
+)
+bracketR=(
+' ### '
+'   # '
+'   # '
+'   # '
+' ### '
+)
+curlR=(
+' ##  '
+'   # '
+'   ##'
+'   # '
+' ##  '
+)
+question=(
+' ### '
+'#   #'
+'   # '
+'  #  '
+'  #  '
+)
+quote=(
+'  #  '
+'  #  '
+'     '
+'     '
+'     '
+)
+
+# options
+################################################################################
+bg=0
+color=7
+file=''
+motd=''
+character=''
+while :; do
+	case $1 in
+		'') echo -e "\n$info \e[36m${0##*/}\e[0m needs input for STRING"
+			usage;;
+		-b) bg=$2
+			shift;;
+		-c) color=$2
+			shift;;
+		-C) colorchart
+			exit;;
+		-f) file=$2
+			shift;;
+		-i) interactive;;
+		-m) motd=1;;
+		-r) restore
+			exit;;
+		-t) ch=${2:0:1}
+			character=${ch^^}
+			shift;;
+		-\?|--help) usage;;
+		-?*) echo -e "\n$info Unknown option: $1";;
+		*) break
+	esac
+	shift
+done
+
+# main commands
+################################################################################
+[[ -z $bannerout ]] && string2array "$@"
+
+# save to file
+if [[ $file ]]; then
+	echo "$bannerout" > $file
+	echo -e "\n$info Display the banner: echo -e \"\$( < $file )\"\n"
+fi
+
+# modify 'motd'
+if [[ $motd ]]; then
+	if [[ $bannerout ]]; then
+		echo "$bannerout" > /etc/motd.banner
+		if [[ -d /etc/profile.d ]]; then
+			echo -e '#!/bin/bash\necho -e "$( < /etc/motd.banner )"' > /etc/profile.d/motd.sh
+			chmod +x /etc/profile.d/motd.sh
+		else
+			echo 'cat /etc/motd.banner' >> /etc/profile
+		fi
+		mv /etc/motd{,.original} &> /dev/null
+		echo -e "\n$info Relogin to see new 'motd' banner.\n"
+	else
+		echo -e "$info No input for new 'motd' banner."
+		usage
+	fi
+fi

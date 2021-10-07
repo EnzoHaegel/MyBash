@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    back()
+
+UTILISATION :
+    back
+
+DESCRIPTION :
+    Fais un cd vers le back de PopleeTalent
+
+VALEUR DE RETOUR :
+    Valeur de retour de cd
+    0 si tout se passe bien
+
+    [1/1]
+"
+fi

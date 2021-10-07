@@ -1,0 +1,25 @@
+#!/bin/bash
+
+NumberMax="$1"
+HNum="0"
+BarSize="$2"
+BarDiv=$((100 / $BarSize))
+
+progress() {
+    HNum=$(($1 * 100 / $NumberMax / $BarDiv))
+    HVar=""
+    for (( x=0; x<"$HNum"; x++)); do
+        HVar+="#"
+    done
+    ENum="$(($BarSize - HNum))"
+    for (( x=0; x<"$ENum"; x++)); do
+        HVar+=" "
+    done
+    echo -ne "[$HVar] ($(($1 * 100 / $NumberMax))%)  $1/$NumberMax\r"
+}
+
+for (( p=0; p<="$NumberMax"; p++ )); do
+    progress "$p"
+done
+sleep 1
+clear

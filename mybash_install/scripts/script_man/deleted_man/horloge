@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Après avoir écris le man supprimez ce code jusqu'au prochain commentaire
+    echo "
+Man vide, pour editer ce man tapez:"
+    echo "man $(basename "$0") edit"
+# ici
+
+# Ecrivez le man à la suite du echo
+    echo "
+UTILISATION :
+    AHAH JE M'AMSUE
+
+DESCRIPTION :
+
+    [1/1]
+"
+fi

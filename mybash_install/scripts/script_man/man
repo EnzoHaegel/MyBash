@@ -1,0 +1,51 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    man(...)
+
+UTILISATION :
+    man [Nom de la fonction / script] {paramètres} {man à copié}
+
+    Liste des paramètres:
+
+        - edit / e :
+            Permet d'ouvrire le man sur VS Code, si le man n'existe pas, on le 
+            créer à partir du man template.
+        
+        - delete / d :
+            Permet de supprimer un man, on stock le dernier man d'un même nom
+            dans un dossier save pour le restore au cas ou.
+
+        - restore / r
+            Permet de restore un man supprimer par mégarde ou juste pour le 
+            remettre.
+            ATTENTION: Si vous faites un restore, et que vous avez un man du
+            même nom, le restore va supprimer le man actuel définitivement
+
+        - new / n
+            Permet de créer un nouveau man à partir d'un man template
+
+        - copy / c
+            Permet de copié dans le man $1, le man $3
+            Si il existait déjà un man, vous pouvez utiliser le man [nom] restore
+
+        - link / l
+            Permet de link un nom de man vers un autre, utile pour les alias
+            [man qui à le lien] link [man vers qui on link]
+
+DESCRIPTION :
+    Utilisez le man pour avoir plus d'info sur n'importe quel script ou
+    fonctions, tapez juste : man, pour avoir la liste des fonctions.
+
+    Si vous voulez la liste des man actuels, ecrivez : manlist
+
+VALEUR DE RETOUR :
+    Toujours 0
+
+    [1/1]
+"
+fi

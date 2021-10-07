@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    tree(string)
+
+UTILISATION :
+    tree <directory-name>
+
+DESCRIPTION :
+    Affiche tous les fichiers dans le dossier donné et tous les sous dossiers
+    en couleur, vert : fichier, bleu : dossier.
+
+VALEUR DE RETOUR :
+    1 si pas de paramètres
+    0 tous les autres cas
+
+    [1/1]
+"
+fi

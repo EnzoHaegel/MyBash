@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+    echo "
+Man vide, pour editer ce man tapez:"
+    echo "man $(basename "$0") edit"
+    echo "
+UTILISATION :
+
+DESCRIPTION :
+
+    [1/1]
+"
+fi

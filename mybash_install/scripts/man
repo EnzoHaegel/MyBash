@@ -1,0 +1,120 @@
+#!/bin/bash
+
+arg1="$1"
+arg3="$3"
+if [ ! -d "C:/Users/ehaegel/scripts" ]; then
+    mkdir C:/Users/ehaegel/scripts
+    mv ./man C:/Users/ehaegel/scripts
+fi
+if [ ! -d "C:/Users/ehaegel/scripts/script_man" ]; then
+    mkdir C:/Users/ehaegel/scripts/script_man
+fi
+if [ ! -d "C:/Users/ehaegel/scripts/script_man/alias" ]; then
+    mkdir C:/Users/ehaegel/scripts/script_man/alias
+fi
+if [ ! -f "C:/Users/ehaegel/scripts/script_man/$arg1" ] && [ -f "C:/Users/ehaegel/scripts/script_man/alias/$arg1" ]; then
+    arg1="alias/$arg1"
+fi
+if [ ! -f "C:/Users/ehaegel/scripts/script_man/$arg3" ] && [ -f "C:/Users/ehaegel/scripts/script_man/alias/$arg3" ]; then
+    arg3="alias/$arg3"
+fi
+if [ -z "$arg1" ] || [ "$arg1" == "1" ]; then
+    C:/Users/ehaegel/scripts/script_man/script
+elif [ "$arg1" == "2" ]; then
+    C:/Users/ehaegel/scripts/script_man/script 2
+else
+    if [ -f "C:/Users/ehaegel/scripts/script_man/$arg1" ]; then
+        if [ "$2" == "edit" ] || [ "$2" == "e" ]; then
+            code C:/Users/ehaegel/scripts/script_man/"$arg1"
+        elif [ "$2" == "delete" ] || [ "$2" == "d" ]; then
+            mv C:/Users/ehaegel/scripts/script_man/"$arg1" C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1"
+        elif [ "$2" == "restore" ] || [ "$2" == "r" ]; then
+            if [ -f C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1" ]; then
+                mv C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1" C:/Users/ehaegel/scripts/script_man/"$arg1"
+            elif [ -f C:/Users/ehaegel/scripts/script_man/deleted_man/alias/"$arg1" ]; then
+                mv C:/Users/ehaegel/scripts/script_man/deleted_man/alias/"$arg1" C:/Users/ehaegel/scripts/script_man/alias/"$arg1"
+            else
+                echo "Désolé, il n'y à aucune restore possible pour ce nom de fichier : $arg1"
+                echo "Est-ce le bon nom de fichier ?"
+            fi
+        elif [ "$2" == "copy" ] || [ "$2" == "c" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] copy [man à copié]"
+                echo "Pour afficher la liste des fichiers : manlist"
+            else
+                mv C:/Users/ehaegel/scripts/script_man/"$arg1" C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1"
+                touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+                cat C:/Users/ehaegel/scripts/script_man/"$arg3" > C:/Users/ehaegel/scripts/script_man/"$arg1"
+            fi
+        elif [ "$2" == "link" ] || [ "$2" == "l" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] link [man vers qui on link]"
+                echo "Pour afficher la liste des fichiers : manlist"
+            else
+                mv C:/Users/ehaegel/scripts/script_man/"$arg1" C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1"
+                touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+                echo "man $arg3 \"\$1\"" > C:/Users/ehaegel/scripts/script_man/"$arg1"
+            fi
+        elif [ "$2" == "alias" ] || [ "$2" == "a" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] link [man vers qui on alias]"
+                echo "Pour afficher la liste des fichiers valides : manlist"
+            else
+                echo "#!/bin/bash
+# lien vers le fichier correspondant : C:/Users/ehaegel/scripts/script_man/$arg3
+man $arg3 \"\$1\"" > C:/Users/ehaegel/scripts/script_man/alias/"$arg1"
+            fi
+        else
+            C:/Users/ehaegel/scripts/script_man/"$arg1" "$2" 
+        fi
+    else
+        if [ "$2" == "edit" ] || [ "$2" == "e" ]; then
+            touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+            cat C:/Users/ehaegel/scripts/script_man/template > C:/Users/ehaegel/scripts/script_man/"$arg1"
+            code C:/Users/ehaegel/scripts/script_man/"$arg1"
+        elif [ "$2" == "new" ] || [ "$2" == "n" ]; then
+            touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+            cat C:/Users/ehaegel/scripts/script_man/template > C:/Users/ehaegel/scripts/script_man/"$arg1"
+        elif [ "$2" == "restore" ] || [ "$2" == "r" ]; then
+            if [ -f C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1" ]; then
+                mv C:/Users/ehaegel/scripts/script_man/deleted_man/"$arg1" C:/Users/ehaegel/scripts/script_man/"$arg1"
+            elif [ -f C:/Users/ehaegel/scripts/script_man/deleted_man/alias/"$arg1" ]; then
+                mv C:/Users/ehaegel/scripts/script_man/deleted_man/alias/"$arg1" C:/Users/ehaegel/scripts/script_man/alias/"$arg1"
+            else
+                echo "Désolé, il n'y à aucune restore possible pour ce nom de fichier : $arg1"
+                echo "Est-ce le bon nom de fichier ?"
+            fi
+        elif [ "$2" == "copy" ] || [ "$2" == "c" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] copy [man à copié]"
+                echo "Pour afficher la liste des fichiers : manlist"
+            else
+                touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+                cat C:/Users/ehaegel/scripts/script_man/"$arg3" > C:/Users/ehaegel/scripts/script_man/"$arg1"
+            fi
+        elif [ "$2" == "link" ] || [ "$2" == "l" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] link [man vers qui on link]"
+                echo "Pour afficher la liste des fichiers valides : manlist"
+            else
+                touch C:/Users/ehaegel/scripts/script_man/"$arg1"
+                echo "man $arg3 \"\$1\"" > C:/Users/ehaegel/scripts/script_man/"$arg1"
+            fi
+        elif [ "$2" == "alias" ] || [ "$2" == "a" ]; then
+            if [ -z "$arg3" ] || [ ! -f C:/Users/ehaegel/scripts/script_man/"$arg3" ]; then
+                echo "Veuillez donner un fichier valide : man [nouveau man] link [man vers qui on alias]"
+                echo "Pour afficher la liste des fichiers valides : manlist"
+            else
+                touch C:/Users/ehaegel/scripts/script_man/alias/"$arg1"
+                echo "#!/bin/bash
+# lien vers le fichier correspondant : C:/Users/ehaegel/scripts/script_man/$arg3
+man $arg3 \"\$1\"" > C:/Users/ehaegel/scripts/script_man/alias/"$arg1"
+            fi
+        else
+            echo -e "Aucun man pour ce nom : \e[1;31m$arg1\e[1;39m"
+            echo ""
+            echo "Recherche de noms similaires !"
+            find_same $arg1 C:/Users/ehaegel/scripts/script_man C:/Users/ehaegel/scripts/script_man/alias
+        fi
+    fi
+fi

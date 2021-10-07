@@ -1,0 +1,70 @@
+#!/bin/bash
+
+num="1"
+save=""
+max="0"
+
+for entry in `ls .`; do
+    if [ -f "./$entry" ]; then
+        if (( ${#entry}>$max )); then
+            max=${#entry}
+        fi
+    fi
+done
+max=$(($max+3))
+
+for entry in `ls .`; do
+    if [ -f "./$entry" ]; then
+        if [ "$num" == "1" ]; then
+            num="2"
+            if [[ "$entry" = *.cs ]]; then
+                echo -ne "\e[32m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.ts ]]; then
+                echo -ne "\e[1;34;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.html ]]; then
+                echo -ne "\e[1;31;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.json ]]; then
+                echo -ne "\e[\e[2;33;40m- $entry\e[0;37;40m"
+            else
+                echo -n "- $entry"
+            fi
+            save="$entry"
+        elif [ "$num" == "2" ]; then
+            num="3"
+            for (( x=0; x<$max-${#save}; x++)); do
+                echo -n " "
+            done
+            if [[ "$entry" = *.cs ]]; then
+                echo -ne "\e[32m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.ts ]]; then
+                echo -ne "\e[1;34;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.html ]]; then
+                echo -ne "\e[1;31;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.json ]]; then
+                echo -ne "\e[\e[2;33;40m- $entry\e[0;37;40m"
+            else
+                echo -n "- $entry"
+            fi
+            save="$entry"
+        elif [ "$num" == "3" ]; then
+            num="1"
+            for (( x=0; x<$max-${#save}; x++)); do
+                echo -n " "
+            done
+            if [[ "$entry" = *.cs ]]; then
+                echo -e "\e[32m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.ts ]]; then
+                echo -e "\e[1;34;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.html ]]; then
+                echo -e "\e[1;31;40m- $entry\e[0;37;40m"
+            elif [[ "$entry" = *.json ]]; then
+                echo -e "\e[\e[2;33;40m- $entry\e[0;37;40m"
+            else
+                echo "- $entry"
+            fi
+        fi
+    fi
+done
+if [ "$num" != "1" ]; then
+    echo ""
+fi

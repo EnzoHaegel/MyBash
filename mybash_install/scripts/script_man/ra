@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    ra()
+
+UTILISATION :
+    ra
+
+DESCRIPTION :
+    ra est un raccourci de rebuild all, rebuild tout à neuf front et back sur rc
+    de poplee talent, peut mettre un peu de temps.
+
+VALEUR DE RETOUR :
+    Pleins possibles suivant l'erreur
+
+    [1/1]
+"
+fi

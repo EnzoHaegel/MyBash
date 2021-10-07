@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    d()
+
+UTILISATION :
+    d
+
+DESCRIPTION :
+    d Affiche l'heure de votre pc, prend tout le terminal et s'update.
+    Appuyez sur la touche \"q\" pour stopper le programme.
+    /!\ La fonction banner et indispensable pour faire fonctionner ce script
+
+VALEUR DE RETOUR :
+    Toujours 0
+
+    [1/1]
+"
+fi

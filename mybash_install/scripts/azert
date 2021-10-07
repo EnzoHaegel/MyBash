@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for ARG in "${@:2}"; do
+    echo $ARG
+done

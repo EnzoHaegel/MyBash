@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ "$1" == "1" ]; then
+
+# Ecrivez le man à la suite du echo
+    echo "
+PROTOTYPE   :
+    ltl()
+
+UTILISATION :
+    ltl
+
+DESCRIPTION :
+    ltl est un alias de lucca translate lokalise, il met à jour les fichier de
+    traduction depuis le serveur lokalise
+
+VALEUR DE RETOUR :
+    Valeur de retour de lucca translate lokalise
+
+    [1/1]
+"
+fi
