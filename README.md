@@ -65,7 +65,7 @@ Before starting :checkered_flag:, you need to have [GitBash](https://gitforwindo
 $ git clone https://github.com/EnzoHaegel/mybash
 
 # Access
-$ cd mybash
+$ cd mybash/mybash_install
 
 # Setup custom Bash
 $ ./install [name of user on PC]
